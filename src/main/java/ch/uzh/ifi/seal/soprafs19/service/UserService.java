@@ -45,11 +45,10 @@ public class UserService {
         return newUser;
     }
 
-    //for login
+    //login
     public User checkUser(User newUser) {
-        //fetches a user with the password/null and also checks if that user has the same username -> fixes error of logging with pw of diff user
-        User loginUser = userRepository.findByPassword(newUser.getPassword());
-        if(loginUser != null && loginUser.getUsername().equals(newUser.getUsername())) {
+        User loginUser = userRepository.findByUsername(newUser.getUsername());
+        if(loginUser != null && loginUser.getPassword().equals(newUser.getPassword())) {
             User tempUser = userRepository.findByUsername(newUser.getUsername());
             tempUser.setStatus(UserStatus.ONLINE);
             tempUser.setToken(UUID.randomUUID().toString());
@@ -59,7 +58,7 @@ public class UserService {
         throw new NonexistentUserException("Name: "+newUser.getPassword()+" Username: "+newUser.getUsername());
     }
 
-    //for logout
+    //logout
     public User logoutUser(User newUser) {
         User tempUser = userRepository.findByToken(newUser.getToken());
         tempUser.setStatus(UserStatus.OFFLINE);
@@ -67,7 +66,7 @@ public class UserService {
         return tempUser;
     }
 
-    //for displaying profile
+    //profile
     public User getUser(long id) {
         User tempUser = userRepository.findById(id);
         if(tempUser !=null) {
@@ -78,7 +77,7 @@ public class UserService {
         }
     }
 
-    //for updating the Username and or Birthday
+    //update Username and/or Birthday
     public User updateUser(User newUser) {
         User tempUser = userRepository.findByToken(newUser.getToken());
         if(userRepository.findByUsername(newUser.getUsername()) != null && userRepository.findByUsername(newUser.getUsername())!=tempUser) {
