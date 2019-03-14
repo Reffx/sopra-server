@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs19.service;
+package ch.uzh.ifi.seal.soprafs19.controller;
 
 import ch.uzh.ifi.seal.soprafs19.Application;
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
@@ -22,7 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes= Application.class)
-public class UserServiceTest {
+public class UserControllerTest {
 
 
     @Qualifier("userRepository")
@@ -30,22 +30,38 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private UserService userService;
+    private UserController userController;
 
     @Test
-    public void createUser() {
-        Assert.assertNull(userRepository.findByUsername("testUsername"));
+    public void checkUser() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("test");
         testUser.setBirthday("16.03.1994");
         testUser.setDate("17-02-2019");
-
-        User createdUser = userService.createUser(testUser);
-
-        Assert.assertNotNull(createdUser.getToken());
-        Assert.assertEquals(createdUser.getStatus(),UserStatus.OFFLINE);
-        Assert.assertEquals(createdUser, userRepository.findByToken(createdUser.getToken()));
+        userController.createUser(testUser);
+        Assert.assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
+        testUser = userController.checkUser(testUser);
+        Assert.assertEquals(testUser.getStatus(), UserStatus.ONLINE);
         userRepository.deleteAll();
     }
+
+    @Test
+    public void logoutUser() {
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("test");
+        testUser.setBirthday("16.03.1994");
+        testUser.setDate("17-02-2019");
+        userController.createUser(testUser);
+        Assert.assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
+        testUser = userController.checkUser(testUser);
+        Assert.assertEquals(testUser.getStatus(), UserStatus.ONLINE);
+        testUser = userController.logoutUser(testUser);
+        Assert.assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
+        userRepository.deleteAll();
+    }
+
+
+
 }

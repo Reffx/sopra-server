@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs19.service;
 
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs19.controller.DuplicateException;
+import ch.uzh.ifi.seal.soprafs19.controller.NonExistentBirthdayException;
 import ch.uzh.ifi.seal.soprafs19.controller.NonexistentUserException;
 import ch.uzh.ifi.seal.soprafs19.entity.User;
 import ch.uzh.ifi.seal.soprafs19.repository.UserRepository;
@@ -35,7 +36,10 @@ public class UserService {
     //registration
     public User createUser(User newUser) {
         if(userRepository.findByUsername(newUser.getUsername())!=null) {
-            throw new DuplicateException("Duplicate Exception with Username: "+newUser.getUsername());
+            throw new DuplicateException("Username already taken" +newUser.getUsername());
+        }
+        if(userRepository.findByUsername(newUser.getBirthday())== null) {
+            throw new NonExistentBirthdayException("Birthday missing");
         }
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.OFFLINE);
