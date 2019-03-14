@@ -34,12 +34,12 @@ public class UserService {
 
     //registration
     public User createUser(User newUser) {
-        if(userRepository.findByPassword(newUser.getPassword()) != null || userRepository.findByUsername(newUser.getUsername())!=null) {
-            throw new DuplicateException("Name: "+newUser.getPassword()+" Username: "+newUser.getUsername());
+        if(userRepository.findByUsername(newUser.getUsername())!=null) {
+            throw new DuplicateException("Duplicate Exception with Username: "+newUser.getUsername());
         }
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.OFFLINE);
-        newUser.setBirthday("N/A");
+        newUser.setBirthday(newUser.getBirthday());
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -58,4 +58,38 @@ public class UserService {
         }
         throw new NonexistentUserException("Name: "+newUser.getPassword()+" Username: "+newUser.getUsername());
     }
+
+    //for logout
+    public User logoutUser(User newUser) {
+        User tempUser = userRepository.findByToken(newUser.getToken());
+        tempUser.setStatus(UserStatus.OFFLINE);
+        userRepository.save(tempUser);
+        return tempUser;
+    }
+
+    //for displaying profile
+    public User getUser(long id) {
+        User tempUser = userRepository.findById(id);
+        if(tempUser !=null) {
+            return tempUser;
+        }
+        else {
+            throw new NonexistentUserException("");
+        }
+    }
+
+    //for updating the Username and or Birthday
+    public User updateUser(User newUser) {
+        User tempUser = userRepository.findByToken(newUser.getToken());
+        if(userRepository.findByUsername(newUser.getUsername()) != null && userRepository.findByUsername(newUser.getUsername())!=tempUser) {
+            throw new DuplicateException("User with that Username already exists, cannot change to it.");
+        }
+        else {
+            tempUser.setBirthday(newUser.getBirthday());
+            tempUser.setUsername(newUser.getUsername());
+            userRepository.save(tempUser);
+            return newUser;
+        }
+    }
+
 }
