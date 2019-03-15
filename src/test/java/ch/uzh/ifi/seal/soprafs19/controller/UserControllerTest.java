@@ -34,6 +34,7 @@ public class UserControllerTest {
 
     @Test
     public void checkUser() {
+        userRepository.deleteAll();
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("test");
@@ -43,7 +44,6 @@ public class UserControllerTest {
         Assert.assertEquals(testUser.getStatus(), UserStatus.OFFLINE);
         testUser = userController.checkUser(testUser);
         Assert.assertEquals(testUser.getStatus(), UserStatus.ONLINE);
-        userRepository.deleteAll();
     }
 
     @Test
@@ -62,6 +62,19 @@ public class UserControllerTest {
         userRepository.deleteAll();
     }
 
+    @Test
+    public void getUser() {
+        userRepository.deleteAll();
+        User testUser = new User();
+        testUser.setPassword("test");
+        testUser.setUsername("testUsername");
+        testUser.setBirthday("16.03.1994");
+        testUser.setDate("17-02-2019");
 
+        userController.createUser(testUser);
+        String id = String.valueOf(userRepository.findByUsername("testUsername").getId());
+        Assert.assertEquals(userController.getUser(id), testUser);
+        userRepository.deleteAll();
+    }
 
 }

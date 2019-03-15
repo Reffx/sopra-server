@@ -2,8 +2,7 @@ package ch.uzh.ifi.seal.soprafs19.service;
 
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs19.controller.DuplicateException;
-import ch.uzh.ifi.seal.soprafs19.controller.NonExistentBirthdayException;
-import ch.uzh.ifi.seal.soprafs19.controller.NonexistentUserException;
+import ch.uzh.ifi.seal.soprafs19.controller.NonExistentUserException;
 import ch.uzh.ifi.seal.soprafs19.entity.User;
 import ch.uzh.ifi.seal.soprafs19.repository.UserRepository;
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public class UserService {
             userRepository.save(tempUser);
             return tempUser;
         }
-        throw new NonexistentUserException("Name: "+newUser.getPassword()+" Username: "+newUser.getUsername());
+        throw new NonExistentUserException("Name: "+newUser.getPassword()+" Username: "+newUser.getUsername());
     }
 
     //logout
@@ -77,7 +76,7 @@ public class UserService {
             return tempUser;
         }
         else {
-            throw new NonexistentUserException("");
+            throw new NonExistentUserException("");
         }
     }
 
